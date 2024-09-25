@@ -11,27 +11,34 @@ const randomString = () => {
   return str;
 }
 
-const WheelComponent = ({
-  segments,
-  segColors,
-  onFinished,
-  primaryColor = 'black',
-  contrastColor = 'white',
-  buttonText = 'Spin',
-  isOnlyOnce = true,
-  size = window.innerWidth,
-  upDuration = 100,
-  downDuration = 1000,
-  fontFamily = 'proxima-nova',
-  fontSize = '1em',
-  outlineWidth = 10
-}) => {
-  
+const WheelComponent = (props) => {
+  const { 
+    segments, segColors, onFinished, primaryColor = 'black', contrastColor = 'white', buttonText = 'Spin', isOnlyOnce = true,
+    size = window.innerWidth, upDuration = 100, downDuration = 1000, fontFamily = 'Arial', fontSize = '1em', outlineWidth = 10
+  } = props;
+  const stateRef = useRef();
+  stateRef.current = props;
+
+
   const winningSegmentRef = useRef();
   const canvasContextRef = useRef();
   const canvasId = useRef(`canvas-${randomString()}`);
   const wheelId = useRef(`wheel-${randomString()}`);
   const dimension = (size + 20) * 2;
+
+  // const centerX = sizeRef.current + 20;
+  // const centerY = sizeRef.current + 20;
+  
+  const centerRef = useRef();
+  centerRef.current = size + 20
+
+  const sizeRef = useRef();
+  sizeRef.current = size;
+  const dimensionRef = useRef();
+  dimensionRef.current = dimension;
+  
+  
+  
   let currentSegment = '';
   let isStarted = false;
   const [isFinished, setFinished] = useState(false);
@@ -45,16 +52,7 @@ const WheelComponent = ({
   const downTime = segments.length * downDuration;
   let spinStart = 0;
   let frames = 0;
-  const centerX = size + 20;
-  const centerY = size + 20;
   
-  useEffect(() => {
-    wheelInit()
-    setTimeout(() => {
-      window.scrollTo(0, 1)
-    }, 0)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const wheelInit = () => {
     initCanvas()
@@ -66,16 +64,15 @@ const WheelComponent = ({
 
     if (navigator.userAgent.indexOf('MSIE') !== -1) {
       canvas = document.createElement('canvas')
-      canvas.setAttribute('width', `${dimension}`)
-      canvas.setAttribute('height', `${dimension}`)
+      canvas.setAttribute('width', `${dimensionRef.current}`)
+      canvas.setAttribute('height', `${dimensionRef.current}`)
       canvas.setAttribute('id', canvasId.current)
       document.getElementById(wheelId.current)?.appendChild(canvas)
     }
-    canvas?.addEventListener('click', spin, false)
-    // canvasContext = canvas?.getContext('2d')
+    canvas?.addEventListener('click', spin);
     canvasContextRef.current = canvas?.getContext('2d')
   }
-  
+
   const spin = () => {
     winningSegmentRef.current = segments[_.random(segments.length - 1)];
 
@@ -147,19 +144,19 @@ const WheelComponent = ({
     const value = segments[key]
     ctx.save()
     ctx.beginPath()
-    ctx.moveTo(centerX, centerY)
-    ctx.arc(centerX, centerY, size, lastAngle, angle, false)
-    ctx.lineTo(centerX, centerY)
+    ctx.moveTo(centerRef.current, centerRef.current)
+    ctx.arc(centerRef.current, centerRef.current, sizeRef.current, lastAngle, angle, false)
+    ctx.lineTo(centerRef.current, centerRef.current)
     ctx.closePath()
     ctx.fillStyle = segColors[key % segColors.length]
     ctx.fill()
     ctx.stroke()
     ctx.save()
-    ctx.translate(centerX, centerY)
+    ctx.translate(centerRef.current, centerRef.current)
     ctx.rotate((lastAngle + angle) / 2)
     ctx.fillStyle = contrastColor
-    ctx.font = `bold ${fontSize} ${fontFamily}`
-    ctx.fillText(value.substring(0, 21), size / 2 + 20, 0)
+    ctx.font = `bold ${stateRef.current.fontSize} ${stateRef.current.fontFamily}`
+    ctx.fillText(value.substring(0, 21), sizeRef.current / 2 + 20, 0)
     ctx.restore()
   }
 
@@ -175,7 +172,9 @@ const WheelComponent = ({
     ctx.strokeStyle = primaryColor
     ctx.textBaseline = 'middle'
     ctx.textAlign = 'center'
-    ctx.font = '1em ' + fontFamily
+    // ctx.font = '1em ' + fontFamily
+    ctx.font = `${stateRef.current.fontSize} ${stateRef.current.fontFamily}`
+
     for (let i = 1; i <= len; i++) {
       const angle = PI2 * (i / len) + angleCurrent
       drawSegment(i - 1, lastAngle, angle)
@@ -184,7 +183,7 @@ const WheelComponent = ({
 
     // Draw a center circle
     ctx.beginPath()
-    ctx.arc(centerX, centerY, 50, 0, PI2, false)
+    ctx.arc(centerRef.current, centerRef.current, sizeRef.current * 0.2, 0, PI2, false)
     ctx.closePath()
     ctx.fillStyle = primaryColor
     ctx.lineWidth = 10
@@ -193,15 +192,15 @@ const WheelComponent = ({
     ctx.font = 'bold 1em ' + fontFamily
     ctx.fillStyle = contrastColor
     ctx.textAlign = 'center'
-    ctx.fillText(buttonText, centerX, centerY + 3)
+    ctx.fillText(buttonText, centerRef.current, centerRef.current + 3)
     ctx.stroke()
 
     // Draw outer circle
     ctx.beginPath()
-    ctx.arc(centerX, centerY, size, 0, PI2, false)
+    ctx.arc(centerRef.current, centerRef.current, sizeRef.current, 0, PI2, false)
     ctx.closePath()
 
-    ctx.lineWidth = outlineWidth
+    ctx.lineWidth = stateRef.current.outlineWidth;
     ctx.strokeStyle = primaryColor
     ctx.stroke()
   }
@@ -210,14 +209,17 @@ const WheelComponent = ({
     if (!canvasContextRef.current) {
       return false
     }
+    const w = sizeRef.current * 0.2;
+    const h = w * 0.4;
+
     const ctx = canvasContextRef.current
     ctx.lineWidth = 1
     ctx.strokeStyle = contrastColor
     ctx.fillStyle = contrastColor
     ctx.beginPath()
-    ctx.moveTo(centerX + 20, centerY - 50)
-    ctx.lineTo(centerX - 20, centerY - 50)
-    ctx.lineTo(centerX, centerY - 70)
+    ctx.moveTo(centerRef.current + h, centerRef.current - w)
+    ctx.lineTo(centerRef.current - h, centerRef.current - w)
+    ctx.lineTo(centerRef.current, centerRef.current - (w + h))
     ctx.closePath()
     ctx.fill()
     const change = angleCurrent + Math.PI / 2
@@ -231,7 +233,7 @@ const WheelComponent = ({
     ctx.fillStyle = primaryColor
     ctx.font = 'bold 1.5em ' + fontFamily
     currentSegment = segments[i]
-    isStarted && ctx.fillText(currentSegment, centerX + 10, centerY + size + 50)
+    isStarted && ctx.fillText(currentSegment, centerRef.current + 10, centerRef.current + sizeRef.current + 50)
   }
 
   const clear = () => {
@@ -239,14 +241,30 @@ const WheelComponent = ({
       return false
     }
     const ctx = canvasContextRef.current
-    ctx.clearRect(0, 0, dimension, dimension)
+    ctx.clearRect(0, 0, dimensionRef.current, dimensionRef.current)
   }
+
+  useEffect(() => {
+    //destroyCanvas();
+    draw();
+    
+
+  }, [size]);
+
+  useEffect(() => {
+    wheelInit()
+    setTimeout(() => {
+      window.scrollTo(0, 1)
+    }, 0)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
 
   return {
     spin: () => {
       spin();
     } ,
-    component: (<div id={wheelId.current}><canvas id={canvasId.current} width={dimension} height={dimension} style={{ pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto' }} /></div>)
+    component: (<div id={wheelId.current}><canvas id={canvasId.current} width={dimensionRef.current} height={dimensionRef.current} style={{ pointerEvents: isFinished && isOnlyOnce ? 'none' : 'auto' }} /></div>)
   }
 }
 export default WheelComponent

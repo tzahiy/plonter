@@ -1,11 +1,11 @@
 import './App.css';
-import Plonter from './Plonter';
+import Plonter from './app/components/Plonter';
 
 function App() {
 
   return (
     <div className="App">
-      <Plonter />      
+      <Plonter />
     </div>
   );
 }
