@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/plonter/static/css/main.f855e6bc.css",
-    "main.js": "/plonter/static/js/main.342011ae.js",
+    "main.js": "/plonter/static/js/main.c02f0b32.js",
     "static/js/453.1b639ff6.chunk.js": "/plonter/static/js/453.1b639ff6.chunk.js",
     "index.html": "/plonter/index.html",
     "main.f855e6bc.css.map": "/plonter/static/css/main.f855e6bc.css.map",
-    "main.342011ae.js.map": "/plonter/static/js/main.342011ae.js.map",
+    "main.c02f0b32.js.map": "/plonter/static/js/main.c02f0b32.js.map",
     "453.1b639ff6.chunk.js.map": "/plonter/static/js/453.1b639ff6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f855e6bc.css",
-    "static/js/main.342011ae.js"
+    "static/js/main.c02f0b32.js"
   ]
 }
