@@ -14,6 +14,7 @@ const randomString = () => {
 const WheelComponent = (props) => {
   const { 
     segments, segColors, onFinished, primaryColor = 'black', contrastColor = 'white', buttonText = 'Spin', isOnlyOnce = true,
+    // eslint-disable-next-line no-unused-vars
     size = window.innerWidth, upDuration = 100, downDuration = 1000, fontFamily = 'Arial', fontSize = '1em', outlineWidth = 10
   } = props;
   const stateRef = useRef();
