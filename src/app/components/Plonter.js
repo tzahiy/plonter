@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Stack } from "@mui/joy";
+import { Box, Sheet, Stack, Typography } from "@mui/joy";
 import WheelComponent from "./WheelComponent";
 import { useSpeech } from "react-text-to-speech";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { SEGMENTS, SEGMENTS_COLORS, WORDS } from "../constants";
 import PlayButton from "./PlayButton";
+import Winner from "./Winner";
 
 const getWidth = () => (Math.min(window.innerWidth, window.innerHeight) / 2) - 36 - 8;
 
@@ -14,6 +15,7 @@ const Plonter = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [width, setWidth] = useState(getWidth());
   const [winner, setWinner] = useState("");
+  const [lastWinner, setLastWinner] = useState("");
 
   const startRecognition = () => {
     console.log("start");
@@ -25,9 +27,16 @@ const Plonter = () => {
     SpeechRecognition.stopListening();
   };
 
+  // eslint-disable-next-line no-unused-vars
   const { start, Text } = useSpeech({ text: winner, lang: "he-IL", autoPlay: true,
     onStop: (event) => {
       setWinner("");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+    onStart: (event) => {
+      console.log("Speech Started:");
     },
   });
 
@@ -54,6 +63,7 @@ const Plonter = () => {
     if(!isRunning) {
       spin?.();
       setIsRunning(true);
+      setLastWinner("");
       stopRecognition();
     }
   };
@@ -61,7 +71,7 @@ const Plonter = () => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
   
   useEffect(() => {
-    if(transcript.split(" ").some((t) => WORDS.some((target) => target === t ))) {
+    if(WORDS.some((target) => transcript.includes(target))) {
       handleSpeechSuccess?.();
       resetTranscript();
     } 
@@ -85,6 +95,7 @@ const Plonter = () => {
   }, [isGameStart])
   
   useEffect(() => {
+    winner && setLastWinner(winner);
     !winner && isGameStart && startRecognition();
   }, [winner])
   
@@ -108,9 +119,9 @@ const Plonter = () => {
         <Box flex={1} textAlign={"right"}>{transcript}</Box>
       </Stack>
       {component}
+      <Winner winner={lastWinner} />
     </Box>
   );
 };
-
 
 export default Plonter;
