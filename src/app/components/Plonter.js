@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Stack } from "@mui/joy";
 import WheelComponent from "./WheelComponent";
 import { useSpeech } from "react-text-to-speech";
@@ -16,6 +16,7 @@ const Plonter = () => {
   const [width, setWidth] = useState(getWidth());
   const [winner, setWinner] = useState("");
   const [lastWinner, setLastWinner] = useState("");
+  const timeOutRef = useRef();
 
   const startRecognition = () => {
     console.log("start");
@@ -30,6 +31,8 @@ const Plonter = () => {
   // eslint-disable-next-line no-unused-vars
   const { start, Text } = useSpeech({ text: winner, lang: "he-IL", autoPlay: true,
     onStop: (event) => {
+      timeOutRef.current && clearTimeout(timeOutRef.current);
+      timeOutRef.current = undefined;
       setWinner("");
     },
     onError: (error) => {
@@ -43,6 +46,10 @@ const Plonter = () => {
   const onFinished = (text) => {
     setWinner(text);
     setIsRunning(false);
+    timeOutRef.current = setTimeout(() => {
+      timeOutRef.current = undefined;
+      setWinner("");
+    }, 10 * 1000);
   }
 
   const { spin, component }  = WheelComponent({
