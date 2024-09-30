@@ -24,6 +24,7 @@ export const WORDS = [
   "לדגדג",
   "נקסט",
   "ספין",
+  "תסובב",
 ];
 
 export const SEGMENTS = [
