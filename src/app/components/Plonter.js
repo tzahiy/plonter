@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Sheet, Stack, Typography } from "@mui/joy";
+import { Box, Stack } from "@mui/joy";
 import WheelComponent from "./WheelComponent";
 import { useSpeech } from "react-text-to-speech";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";

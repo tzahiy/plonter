@@ -28,9 +28,9 @@ const Winner = (props) => {
         pl: 5,
         pr: 5,
         svg: {
-          [`& #${winnerObj.id}`]: {
-            fill: winnerObj.color,
-            stroke: winnerObj.color,
+          [`& #${winnerObj?.id}`]: {
+            fill: winnerObj?.color,
+            stroke: winnerObj?.color,
           }
         }
       }}
