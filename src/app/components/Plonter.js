@@ -6,6 +6,7 @@ import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognitio
 import { SEGMENTS, SEGMENTS_COLORS, WORDS } from "../constants";
 import PlayButton from "./PlayButton";
 import Winner from "./Winner";
+import NoSleep from "nosleep.js"
 
 const getWidth = () => (Math.min(window.innerWidth, window.innerHeight) / 2) - 36 - 8;
 
@@ -16,6 +17,9 @@ const Plonter = () => {
   const [width, setWidth] = useState(getWidth());
   const [winner, setWinner] = useState("");
   const [lastWinner, setLastWinner] = useState("");
+
+  const [noSleep] = useState(new NoSleep())
+
   const timeOutRef = useRef();
 
   const startRecognition = () => {
@@ -108,9 +112,11 @@ const Plonter = () => {
   
   useEffect(() => {
     window.addEventListener("resize", updateSize);
+    noSleep?.enable();
 
     return () => {
       window.removeEventListener("resize", updateSize);
+      noSleep?.disable();
     }
   }, []);
 
