@@ -93,10 +93,12 @@ const Plonter = () => {
   }
 
   const handleStartGame = () => {
+    noSleep?.enable();
     setIsGameStart(true);
   };
 
   const handleStopGame = () => {
+    noSleep?.disable();
     setIsGameStart(false);
   };
 
@@ -112,11 +114,9 @@ const Plonter = () => {
   
   useEffect(() => {
     window.addEventListener("resize", updateSize);
-    noSleep?.enable();
 
     return () => {
       window.removeEventListener("resize", updateSize);
-      noSleep?.disable();
     }
   }, []);
 
